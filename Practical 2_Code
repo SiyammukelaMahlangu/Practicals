@@ -1,0 +1,111 @@
+SELECT
+  *
+FROM
+  PRACTICALTWO.PRACTICAL_2_TABLES.CUSTOMERS_LARGE;
+
+--Q1 -List all orders along with the customer name and product name.
+--Expected Output Columns:OrderID, OrderDate, CustomerName, ProductName, Quantity
+SELECT 
+    o.OrderID,
+    o.OrderDate,
+    c.CustomerName,
+    p.ProductName,
+    o.Quantity
+FROM Orders_large o
+INNER JOIN Customers_large c ON o.CustomerID = c.CustomerID
+INNER JOIN Products_large p ON o.ProductID = p.ProductID;
+
+
+-- Q2Which customers have placed at least one order?
+--Expected Output Columns: CustomerID, CustomerName, Country, OrderID, OrderDate
+SELECT 
+    c.CustomerID,
+    c.CustomerName,
+    c.Country,
+    o.OrderID,
+    o.OrderDate
+FROM Customers_large c
+INNER JOIN Orders_large o ON c.CustomerID = o.CustomerID;
+
+--Q3 List all customers and any orders they might have placed. Include customers who havenot placed any orders.
+--Expected Output Columns: CustomerID, CustomerName, Country, OrderID, OrderDate, ProductID, Quantity
+
+SELECT
+    c.CustomerID,
+    c.CustomerName,
+    c.Country,
+    o.OrderID,
+    o.OrderDate,
+    p.ProductID,
+    o.Quantity
+FROM Customers_large c
+LEFT JOIN Orders_large o ON c.CustomerID = o.CustomerID
+LEFT JOIN Products_large p ON o.ProductID = p.ProductID;
+
+--Q4 List all products and how many times each was ordered (if any).
+--ProductID, ProductName, TotalOrders(TotalOrders is the count of how many times the product appears in orders)
+SELECT
+    p.ProductID,
+    p.ProductName,
+    COUNT(o.OrderID) AS TotalOrders
+FROM Products_large p
+LEFT JOIN Orders_large o ON p.ProductID = o.ProductID
+GROUP BY p.ProductID, p.ProductName
+ORDER BY TotalOrders DESC;
+
+--Q5 Find all orders along with product details, including any products that might not havebeen ordered.
+--Expected Output Columns: OrderID, OrderDate, ProductID, ProductName, Price, Quantity
+SELECT
+    o.OrderID,
+    o.OrderDate,
+    p.ProductID,
+    p.ProductName,
+    p.Price,
+    o.Quantity
+FROM Products_large p
+LEFT JOIN Orders_large o ON p.ProductID = o.ProductID
+ORDER BY p.ProductID;
+
+--Q6 Which customers have made orders, and include customers even if they have never placed an order.
+--Expected Output Columns: CustomerID, CustomerName, Country, OrderID, OrderDate, ProductID, Quantity
+SELECT c.CustomerID, 
+        c.CustomerName, 
+        c.Country, 
+        o.OrderID, 
+        o.OrderDate,
+        o.ProductID, 
+        o.Quantity
+        FROM CUSTOMERS_LARGE c
+        RIGHT JOIN ORDERS_LARGE o ON c.CustomerID = o.CustomerID;
+
+--Q7List all customers and orders, showing NULLs where customers have not ordered orwhere orders have no customer info 
+--Expected Output Columns: CustomerID, CustomerName, Country, OrderID, OrderDate, ProductID, Quantity
+
+SELECT
+    c.CustomerID,
+    c.CustomerName,
+    c.Country,
+    o.OrderID,
+    o.OrderDate,
+    o.ProductID,
+    o.Quantity
+FROM CUSTOMERS_LARGE c
+FULL OUTER JOIN ORDERS_LARGE o ON c.CustomerID = o.CustomerID
+ORDER BY c.CustomerID, o.OrderID;
+
+
+--Q8 List all products and orders, showing NULLs where products were never ordered or orders are missing product info.
+-- Expected Output Columns: ProductID, ProductName, Price, OrderID, OrderDate, CustomerID, Quantity
+SELECT
+    p.ProductID,
+    p.ProductName,
+    p.Price,
+    o.OrderID,
+    o.OrderDate,
+    c.CustomerID,
+    c.CustomerName,
+    o.Quantity
+FROM PRODUCTS_LARGE p
+FULL OUTER JOIN ORDERS_LARGE o ON p.ProductID = o.ProductID
+LEFT JOIN CUSTOMERS_LARGE c ON o.CustomerID = c.CustomerID
+ORDER BY p.ProductID, o.OrderID;
